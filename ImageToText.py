@@ -1,29 +1,38 @@
 from PIL import Image
 import argparse
 
-DEBUGSWITCH = 0
+"""
+1: Image to text
+2: Text to Image
+"""
 
-if DEBUGSWITCH:
-    DEFAULT_FILE = "bagira_indian_summer.jpg"
-    DEFAULT_OUT =  'Outputcat.txt'
-else:
-    DEFAULT_FILE = 'Outputcat.txt'
-    DEFAULT_OUT = "bagira_indian_summer.jpg"
+
+DEFAULT_FILE = "Examples/SampleInputImage.jpg"
+DEFAULT_OUT = 'Examples/SampleOutputText.txt'
+
+
 argument_parser = argparse.ArgumentParser()
 argument_parser.add_argument('-i', help='Input File', default=DEFAULT_FILE)
 argument_parser.add_argument('-o', help='Output File', default=DEFAULT_OUT)
-
+argument_parser.add_argument('-d', help="Debug switch {True: Text To Image | False: Image To Text} uses "
+                                        "Examples/SampleInputImage.png", default="False")
 
 def main():
+    DEBUGSWITCH = argument_parser.parse_args().d
     input_file = argument_parser.parse_args().i
     output_file = argument_parser.parse_args().o
+    if DEBUGSWITCH == "True":
+        input_file = "Examples/SampleOutPutText.txt"
+        output_file = "Examples/SampleOutputImage.jpg"
     print(" ===================================== ")
     print("|             Converting              |")
-    print("|        This may take a while        |")
-    print(" ===================================== ")
     convert(input_file, str(output_file))
 
+
 def extractPixelData(input_file, output_file):
+    print("|           Image To Text             |")
+    print("|        This may take a while        |")
+    print(" ===================================== ")
     img = Image.open(input_file)
     img_data = img.load()
 
@@ -48,6 +57,9 @@ def extractPixelData(input_file, output_file):
 
 
 def injectPixelData(input_file, output_file):
+    print("|            Text To Image            |")
+    print("|        This may take a while        |")
+    print(" ===================================== ")
     with open(input_file) as inp:
         inp = inp.read()
         inp = inp.split("||")
@@ -76,7 +88,7 @@ def injectPixelData(input_file, output_file):
         img = img.rotate(90, expand=True)
         img.save(output_file)
 
-        print("Done!!")
+        print("Done!! Output file is " + output_file + "!")
 
 
 
