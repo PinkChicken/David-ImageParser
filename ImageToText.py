@@ -4,11 +4,11 @@ import argparse
 DEBUGSWITCH = 0
 
 if DEBUGSWITCH:
-    DEFAULT_FILE = "TestImage.png"
-    DEFAULT_OUT = 'TestImageText.txt'
+    DEFAULT_FILE = "bagira_indian_summer.jpg"
+    DEFAULT_OUT =  'Outputcat.txt'
 else:
-    DEFAULT_FILE = 'TestImageText.txt'
-    DEFAULT_OUT = "TestImage.png"
+    DEFAULT_FILE = 'Outputcat.txt'
+    DEFAULT_OUT = "bagira_indian_summer.jpg"
 argument_parser = argparse.ArgumentParser()
 argument_parser.add_argument('-i', help='Input File', default=DEFAULT_FILE)
 argument_parser.add_argument('-o', help='Output File', default=DEFAULT_OUT)
@@ -72,6 +72,8 @@ def injectPixelData(input_file, output_file):
                 for i in range(3):
                     pixel.append(int(inp[x][y][i]))
                 out[x, y] = tuple(pixel)
+        img = img.transpose(Image.FLIP_LEFT_RIGHT)
+        img = img.rotate(90, expand=True)
         img.save(output_file)
 
         print("Done!!")
