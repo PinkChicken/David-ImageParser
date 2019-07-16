@@ -1,9 +1,14 @@
 from PIL import Image
 import argparse
-DEFAULT_FILE = "TestImage.png"
-DEFAULT_OUT = 'TestImageText.txt'
-# DEFAULT_FILE = 'TestImageText.txt'
-# DEFAULT_OUT = "TestImage.png"
+
+DEBUGSWITCH = 0
+
+if DEBUGSWITCH:
+    DEFAULT_FILE = "TestImage.png"
+    DEFAULT_OUT = 'TestImageText.txt'
+else:
+    DEFAULT_FILE = 'TestImageText.txt'
+    DEFAULT_OUT = "TestImage.png"
 argument_parser = argparse.ArgumentParser()
 argument_parser.add_argument('-i', help='Input File', default=DEFAULT_FILE)
 argument_parser.add_argument('-o', help='Output File', default=DEFAULT_OUT)
@@ -14,9 +19,9 @@ def main():
     output_file = argument_parser.parse_args().o
     print(" ===================================== ")
     print("|             Converting              |")
+    print("|        This may take a while        |")
     print(" ===================================== ")
     convert(input_file, str(output_file))
-
 
 def extractPixelData(input_file, output_file):
     img = Image.open(input_file)
@@ -24,19 +29,53 @@ def extractPixelData(input_file, output_file):
 
     width, height = img.size
     with open(output_file, 'w') as out:
+        # out.write(str(width))
+        # out.write("||")
+        # out.write(str(height))
+        # out.write("|")
         for y in range(height):
-            out.write("\n")
+            # out.write("|")
             for x in range(width):
                 pixel_val = str(img_data[x, y])
 
                 out.write(pixel_val)
+                out.write("|")
+            out.write("|")
 
     print("\n\n")
     print("Done! File output is: " + output_file + "!")
 
 
+
 def injectPixelData(input_file, output_file):
-    pass
+    with open(input_file) as inp:
+        inp = inp.read()
+        inp = inp.split("||")
+        temp_inp = []
+        for i in range(len(inp)):
+            temp_inp.append(inp[i].split("|"))
+        inp = temp_inp[:-1]
+        for i in range(len(inp)):
+            for o in range(len(inp[0])):
+                inp[i][o] = inp[i][o].split(", ")
+                inp[i][o][0] = inp[i][o][0][1:]
+                inp[i][o][2] = inp[i][o][2][:-1]
+
+        del temp_inp
+        width, height = len(inp), len(inp[0])
+        size = (width, height)
+        img = Image.new("RGB", size, 0)
+        out = img.load()
+        for y in range(height):
+            for x in range(width):
+                pixel = []
+                for i in range(3):
+                    pixel.append(int(inp[x][y][i]))
+                out[x, y] = tuple(pixel)
+        img.save(output_file)
+
+        print("Done!!")
+
 
 
 def convert(input_file, output_file):
